@@ -1,13 +1,3 @@
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES 
-    ('Posh', 'Spice', 1, 0), 
-    ('Mel', 'Brown', 2, 1), 
-    ('Emma', 'Bunton', 3, 0), 
-    ('Melanie', 'Chisolm', 7, 6), 
-    ('Geri', 'Haliwell', 6, 0),
-    ('Britney', 'Spears', 5, 4),
-    ('Fleetwood', 'Mac', 4, 0);
-
 INSERT INTO department (name)
 VALUES 
     ('Engineering'),
@@ -25,5 +15,13 @@ VALUES
     ('Sales Lead', 100000, 4),
     ('Salesperson', 80000, 4);
 
-
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES 
+    ('Posh', 'Spice', 1, NULL), 
+    ('Mel', 'Brown', 2, 1), 
+    ('Emma', 'Bunton', 3, NULL), 
+    ('Melanie', 'Chisolm', 7, 6), 
+    ('Geri', 'Haliwell', 6, NULL),
+    ('Britney', 'Spears', 5, 4),
+    ('Fleetwood', 'Mac', 4, NULL);
     

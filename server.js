@@ -22,8 +22,12 @@ const db = new sqlite3.Database('./db/business.db', err => {
 
 // Get single employee
 app.get('/api/employee/:id', (req, res) => {
-    const sql = `SELECT * FROM employee 
-                 WHERE id = ?`;
+    const sql = `SELECT employee.*, role.title 
+             AS title 
+             FROM employee 
+             LEFT JOIN role 
+             ON employee.role_id = role.id
+             WHERE employee.id = ?`;
     const params = [req.params.id];
     db.get(sql, params, (err, row) => {
       if (err) {
@@ -83,7 +87,11 @@ app.post('/api/employee', ({ body }, res) => {
 
 // Get all employees
 app.get('/api/employee', (req, res) => {
-    const sql = `SELECT * FROM employee`;
+    const sql = `SELECT employee.*, role.title 
+             AS title 
+             FROM employee 
+             LEFT JOIN role 
+             ON employee.role_id = role.id`;
     const params = [];
     db.all(sql, params, (err, rows) => {
       if (err) {
