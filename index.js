@@ -54,6 +54,9 @@ const promptQuestions = () => {
             else if (choice.viewAll === 'Add Role') {
                 addRole();
             }
+            else if (choice.viewAll === 'Add Employee') {
+                addEmployee();
+            }
         })
 
     function readEmployees() {
@@ -222,7 +225,76 @@ const promptQuestions = () => {
                 })
     
             })        
-    }
+    };
+
+    function addEmployee() {
+        connection.promise().query(`
+        SELECT role.id, role.title FROM role
+        `)
+        .then(([rows])=> {
+            var roles = rows.map(({id, title}) => ({
+                name: title,
+                value: id
+                
+            }));
+        
+            console.log(rows)
+            return inquirer.prompt([
+
+                {
+                    type: 'input',
+                    name: 'firstname',
+                    message: 'Provide employee FIRST NAME',
+                    validate: firstNameInput => {
+                        if (firstNameInput) {
+                            return true;
+                        } else {
+                            console.log('Please enter FIRST NAME!');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'lastname',
+                    message: 'Provide employee LAST NAME',
+                    validate: lastNameInput => {
+                        if (lastNameInput) {
+                            return true;
+                        } else {
+                            console.log('Please enter LAST NAME')
+                        }
+                    }
+
+                },
+                {
+                    type: 'list',
+                    name: 'roleselect',
+                    message: 'Provide select a ROLE',
+                    choices: roles
+
+                },
+            ])
+                .then(({firstname, lastname, roleselect}) => {
+                    
+
+                    console.log('updating employee');
+                    const sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)`;
+                    const params = [firstname, lastname, roleselect];
+                    connection.query(sql, params, function (err, res) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log(`=================================
+                                        SUCCESSFULLY added EMPLOYEE
+                                    ==================================
+                            `);
+                    });
+                    promptQuestions();
+                })
+    
+            })
+    };
 }
 
 promptQuestions();
