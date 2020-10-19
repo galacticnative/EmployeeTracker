@@ -7,7 +7,19 @@ const connection = require('./db/database');
 
 const employeeData = [];
 
+console.log(
+        `
+        ********************************************************
+        ********************************************************
+
+                WELCOME TO EMPLOYEE TRACKER
+
+        ********************************************************
+        ********************************************************
+        `
+)
 const promptQuestions = () => {
+    
     return inquirer.prompt([
         {
             type: 'list',
@@ -38,6 +50,9 @@ const promptQuestions = () => {
             }
             else if (choice.viewAll === 'Add Department') {
                 addDepartment();
+            }
+            else if (choice.viewAll === 'Add Role') {
+                addRole();
             }
         })
 
@@ -139,8 +154,75 @@ const promptQuestions = () => {
                 });
                 promptQuestions();
             })
+    };
+
+    function addRole() {
+        connection.promise().query(`
+        SELECT department.name, department.id FROM department
+        `)
+        .then(([rows])=> {
+            var departments = rows.map(({name, id}) => ({
+                name: name,
+                value: id
+                
+            }));
+        
+            console.log(rows)
+            return inquirer.prompt([
+
+                {
+                    type: 'input',
+                    name: 'roletitle',
+                    message: 'Provide a new Role TITLE',
+                    validate: roleTitleInput => {
+                        if (roleTitleInput) {
+                            return true;
+                        } else {
+                            console.log('Please enter a Role TITLE!');
+                            return false;
+                        }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'rolesalary',
+                    message: 'Provide a new Role SALARY',
+                    validate: roleSalaryInput => {
+                        if (roleSalaryInput) {
+                            return true;
+                        } else {
+                            console.log('Please enter a Role SALARY')
+                        }
+                    }
+
+                },
+                {
+                    type: 'list',
+                    name: 'roledept',
+                    message: 'Provide select a DEPARTMENT',
+                    choices: departments
+
+                },
+            ])
+                .then(({roletitle, rolesalary, roledept}) => {
+                    
+
+                    console.log('updating Role');
+                    const sql = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+                    const params = [roletitle, rolesalary, roledept];
+                    connection.query(sql, params, function (err, res) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log(`================
+                            SUCCESSFULLY added Role
+                            =============================`);
+                    });
+                    promptQuestions();
+                })
+    
+            })        
     }
 }
-
 
 promptQuestions();
