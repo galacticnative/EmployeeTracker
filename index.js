@@ -40,9 +40,11 @@ const promptQuestions = () => {
         .then(choice => {
             if (choice.viewAll === 'View ALL Employees') {
                 readEmployees();
-            } else if (choice.viewAll === 'View Departments') {
+            } 
+            else if (choice.viewAll === 'View Departments') {
                 viewDepartment();
-            } else if (choice.viewAll === 'View by Manager') {
+            } 
+            else if (choice.viewAll === 'View by Manager') {
                 viewManager();
             }
             else if (choice.viewAll === 'View Roles') {
@@ -56,6 +58,9 @@ const promptQuestions = () => {
             }
             else if (choice.viewAll === 'Add Employee') {
                 addEmployee();
+            }
+            else if (choice.viewAll === 'Update Role') {
+                updateRole();
             }
         })
 
@@ -294,6 +299,60 @@ const promptQuestions = () => {
                 })
     
             })
+    };
+
+    function updateRole() {
+        connection.promise().query(`
+        SELECT employee.last_name, employee.id, role.id, role.title 
+        FROM employee
+        LEFT JOIN role ON employee.role_id = role.id
+        `)
+        .then(([rows])=> {
+            var employees = rows.map(({ last_name, id }) => ({
+                name: last_name,
+                value: id   
+            }))
+            var roles = rows.map(({ id, title }) => ({
+                name: title,
+                value: id
+            })
+            );
+        
+            console.log(rows)
+            return inquirer.prompt([
+
+                {
+                    type: 'list',
+                    name: 'employeelist',
+                    message: 'Select an Employee',
+                    choices: employees
+                },
+                {
+                    type: 'list',
+                    name: 'rolelist',
+                    message: 'Select a Role',
+                    choices: roles
+                }
+            ])
+            .then(({employeelist, rolelist}) => {
+                
+
+                console.log('updating Role');
+                const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+                const params = [employeelist, rolelist];
+                connection.query(sql, params, function (err, res) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`=================================
+                                    SUCCESSFULLY updated Role
+                                ==================================
+                        `);
+                });
+                promptQuestions();
+            })
+
+        })
     };
 }
 

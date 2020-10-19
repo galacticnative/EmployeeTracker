@@ -17,6 +17,7 @@ Once in the root directory after git cloning the repo, open terminal and type "m
 
 ## Video Link showing app in use:
 
+https://drive.google.com/file/d/1l2EQI0JYix2_9eopVE7ZXnDZ2JmCMNtv/view
 
 ![picture](./employeetracker.png)
     
